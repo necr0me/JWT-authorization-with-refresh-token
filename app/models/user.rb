@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   before_create :hash_password!
 
+  has_one :refresh_token, dependent: :destroy
+
   validates :email, presence: true, uniqueness: true
   validates :password, presence: true
 
