@@ -2,9 +2,16 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      post 'login', to: 'sessions#login'
+      delete 'sign_out', to: 'sessions#destroy'
+
+      get 'refresh_tokens', to: 'sessions#refresh_tokens'
+
+      get 'test_method', to: 'sessions#test_method'
+
       namespace :users do
         post 'sign_up', to: 'registrations#create'
-        delete 'destroy/:id', to: 'registrations#destroy'
+        delete ':id', to: 'registrations#destroy'
       end
     end
   end

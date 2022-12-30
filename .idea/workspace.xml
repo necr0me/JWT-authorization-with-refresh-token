@@ -5,20 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8b6f825e-6638-496f-a6f5-53202fb0fa94" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/services/application_service.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/jwt/decoder_service.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/jwt/encoder_service.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/services/jwt/tokens_generator_service.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config/initializers/constants.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/JWT-authorization-with-refresh-token.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/JWT-authorization-with-refresh-token.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/auth/authentication_service.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/auth/authorization_service.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/services/jwt/tokens_refresher_service.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gemfile" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Gemfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Gemfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/users/registrations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/api/v1/users/registrations_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/credentials.yml.enc" beforeDir="false" afterPath="$PROJECT_DIR$/config/credentials.yml.enc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/jwt/tokens_generator_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/jwt/tokens_generator_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/application.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/application.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/initializers/constants.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/initializers/constants.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,6 +57,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/services/auth" />
       <recent name="$PROJECT_DIR$/app/controllers/api/v1/users" />
       <recent name="$PROJECT_DIR$/app/services" />
     </key>
@@ -153,7 +149,8 @@
       <workItem from="1671711631676" duration="241000" />
       <workItem from="1671717690783" duration="10220000" />
       <workItem from="1672231273573" duration="7953000" />
-      <workItem from="1672312733238" duration="225000" />
+      <workItem from="1672312733238" duration="10830000" />
+      <workItem from="1672397082298" duration="6676000" />
     </task>
     <servers />
   </component>
