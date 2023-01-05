@@ -1,6 +1,7 @@
 class Api::V1::Users::RegistrationsController < ApplicationController
   include Userable
-  before_action :find_user, only: :destroy
+  before_action :find_user, :authorize!,
+                only: :destroy
 
   def create
     @user = User.create(user_params)
@@ -13,7 +14,7 @@ class Api::V1::Users::RegistrationsController < ApplicationController
 
   def destroy
     @user.destroy
-    render head: 204
+    head 204
   end
 
 end

@@ -19,7 +19,7 @@ module Auth
     def authenticate
       @user = User.find_by(email: email)
       if @user.present?
-        if BCrypt::Password.new(@user.password) == password
+        if @user.authenticate(password)
           OpenStruct.new(success?: true, user: @user, errors: nil)
         else
           OpenStruct.new(success?: false, user: nil, errors: ['Invalid password.'])

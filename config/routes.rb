@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       post 'login', to: 'sessions#login'
-      delete 'sign_out', to: 'sessions#destroy'
+      delete 'logout', to: 'sessions#destroy'
 
       get 'refresh_tokens', to: 'sessions#refresh_tokens'
 

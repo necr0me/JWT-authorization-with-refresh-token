@@ -10,7 +10,7 @@ class Api::V1::SessionsController < ApplicationController
         value: refresh_token,
         expires: JWT_EXPIRATION_TIMES['refresh'],
         httponly: true }
-      render json: { 'access_token' => access_token, 'user' => result.user }, status: 200
+      render json: { 'access_token' => access_token }, status: 200
     else
       render json: { 'errors' => result.errors  }, status: 400
     end
@@ -37,7 +37,7 @@ class Api::V1::SessionsController < ApplicationController
   def destroy
     current_user.refresh_token.destroy
     cookies.delete :refresh_token
-    render json: { 'message' => 'You have successfully logged out.'}, status: 204
+    render json: { 'message' => 'You have successfully logged out.' }, status: 200
   end
 
   private

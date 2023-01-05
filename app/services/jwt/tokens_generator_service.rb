@@ -19,7 +19,7 @@ module Jwt
       access_token = Jwt::EncoderService.call(payload: { user_id: user_id },
                                               type: 'access')
       refresh_token = Jwt::EncoderService.call(payload: { user_id: user_id },
-                                                 type: 'refresh')
+                                               type: 'refresh')
       user = User.includes(:refresh_token).find(user_id)
       if user.refresh_token.present?
         user.refresh_token.update(value: refresh_token)
