@@ -584,6 +584,6 @@ Don't forget to cover written code with tests.
 
 **Thank you for your attention!**
 
-<sub>P.S. I am beginner at Ruby and Rails, so mark anything you will find at Issues
+<sub>P.S. I am beginner at Ruby and Rails, so mark anything you will find at Issues</sub>
 
-P.P.S Sorry for bad English :D</sub>
+<sub>P.P.S Sorry for bad English :D</sub>
