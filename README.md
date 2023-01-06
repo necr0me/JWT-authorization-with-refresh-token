@@ -69,7 +69,7 @@ $ rails db:create db:migrate
 ```
 Now, we can create our RegistrationsController:
 ```
-rails g controller Api::V1::Registrations
+rails g controller Api::V1::Users::Registrations
 ```
 RegistrationsController will have two actions - create (registration of user) and destroy (deleting user). Let's write this in `config/routes.rb` file:
 ```ruby
@@ -334,3 +334,256 @@ end
 
 **3. Authorization and authentication**
 
+Final part.
+Authentication, authorization and tokens refreshing will be implented using services objects. All this services will return OpenStruct objects as result, which contains three methods: 
+
+`success?` - boolean value, that shows, if service worked correctly
+
+`data` - some data that should be returned after service working
+
+`errors` - array that contains errors occurd during service working
+
+This way helps to handle any errors that occur during code execution. 
+
+Firstly, implement `app/services/jwt/tokens_refresher_service.rb`:
+```ruby
+module Jwt
+  class TokensRefresherService < ApplicationService
+    def initialize(refresh_token: )
+      @refresh_token = refresh_token
+    end
+
+    def call
+      refresh_tokens
+    end
+
+    private
+
+    attr_reader :refresh_token
+
+    def refresh_tokens
+      begin
+        decoded_token = Jwt::DecoderService.call(token: refresh_token,
+                                                 type: 'refresh').first
+        user = User.includes(:refresh_token).find(decoded_token['user_id'])
+
+        if user.refresh_token.value != refresh_token
+          return OpenStruct(success?: false, tokens: nil, errors: ['Tokens aren\'t matching.'])
+        end
+
+        tokens = TokensGeneratorService.call(user_id: decoded_token['user_id'])
+        return OpenStruct.new(success?: true, tokens: tokens, errors: nil)
+      rescue JWT::VerificationError, JWT::ExpiredSignature, JWT::DecodeError => e
+        return OpenStruct.new(success?: false, tokens: nil, errors: [e.message])
+      end
+    end
+
+  end
+end
+```
+Then, create `app/services/auth` folder, where auth services will be stored.
+After, create `AuthenticationService`:
+```ruby
+module Auth
+  class AuthenticationService < ApplicationService
+
+    def initialize(user_params:)
+      @email = user_params[:email]
+      @password = user_params[:password]
+    end
+
+    def call
+      authenticate
+    end
+
+    private
+
+    attr_reader :email, :password
+
+    def authenticate
+      @user = User.find_by(email: email)
+      if @user.present?
+        if @user.authenticate(password)
+          OpenStruct.new(success?: true, user: @user, errors: nil)
+        else
+          OpenStruct.new(success?: false, user: nil, errors: ['Invalid password.'])
+        end
+      else
+        OpenStruct.new(success?: false, user: nil, errors: ['Can\'t find user with such email.'])
+      end
+    end
+
+  end
+end
+```
+And `AuthorizationService`:
+```ruby
+module Auth
+  class AuthorizationService < ApplicationService
+    include Constants::Jwt
+
+    def initialize(authorization_header:)
+      @authorization_header= authorization_header
+    end
+
+    def call
+      authorize
+    end
+
+    private
+
+    attr_reader :authorization_header
+
+    def authorize
+      return OpenStruct.new(success?: false, data: nil, errors: ['Authorization header is not presented.']) if authorization_header.nil?
+
+      token = get_token_from_header
+      begin
+        decoded_token = Jwt::DecoderService.call(token: token,
+                                                 type: 'access').first
+        return OpenStruct.new(success?: true, data: decoded_token, errors: nil)
+      rescue JWT::VerificationError, JWT::ExpiredSignature => e
+        return OpenStruct.new(success?: false, data: nil, errors: [e.message])
+      end
+    end
+
+    def get_token_from_header
+      authorization_header.split(' ')[1]
+    end
+
+  end
+end
+```
+After implementing necessary services, let's modify our `ApplicationController` for: handling authorization, handling RecordNotFound error and making all necessary methods avaiable in all of controllers. But before it, enable cookies in your `config/application.rb` file. Paste this lines in the end of file:
+```ruby
+  config.middleware.use ActionDispatch::Cookies
+  config.middleware.use ActionDispatch::Session::CookieStore
+```
+Now, update your `ApplicationController`:
+```ruby
+class ApplicationController < ActionController::API
+  include ActionController::Cookies
+
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
+  protected
+
+  def authorize!
+    @result = Auth::AuthorizationService.call(authorization_header: request.headers['Authorization'])
+    if @result.success?
+      current_user
+    else
+      render json: { 'message' => 'You\'re not logged in.', 'errors' => @result.errors }, status: 401
+    end
+  end
+
+  def current_user
+    @current_user ||= User.find(@result.data['user_id'])
+  end
+
+  def record_not_found(exception)
+    render json: {
+      errors: [exception.message]
+    }, status: 400
+  end
+end
+```
+Now you able to write in any controller you want such line:
+```ruby
+before_action :authorize, only: :action_name
+```
+Which means, that you may require authorization for any actions. So, when you trying to reach `:action_name` endpoint, you need to set up your `Authorization` header. This header should look like this:
+```
+Authorization: Bearer <your_access_token>
+```
+We are close to the end. Update your `config/routes.rb`:
+```ruby
+Rails.application.routes.draw do
+
+  namespace :api do
+    namespace :v1 do
+      post 'login', to: 'sessions#login'
+      delete 'logout', to: 'sessions#destroy'
+
+      get 'refresh_tokens', to: 'sessions#refresh_tokens'
+
+      get 'test_method', to: 'sessions#test_method'
+
+      namespace :users do
+        post 'sign_up', to: 'registrations#create'
+        delete ':id', to: 'registrations#destroy'
+      end
+    end
+  end
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  # Defines the root path route ("/")
+  # root "articles#index"
+end
+```
+`test_method` will be used for testing `authorize!` method, that we are previously defined in `ApplicationController`.
+Create `SessionsController`:
+```
+$ rails g controller Api::V1::Sessions
+```
+Update generated controller with following code:
+```ruby
+class Api::V1::SessionsController < ApplicationController
+  include UserParamable
+  include Constants::Jwt
+
+  before_action :authorize!, only: %i[test_method destroy]
+
+  def login
+    result = Auth::AuthenticationService.call(user_params: user_params)
+    if result.success?
+      access_token, refresh_token = Jwt::TokensGeneratorService.call(user_id: result.user.id)
+      cookies['refresh_token'] = {
+        value: refresh_token,
+        expires: JWT_EXPIRATION_TIMES['refresh'],
+        httponly: true }
+      render json: { 'access_token' => access_token }, status: 200
+    else
+      render json: { 'errors' => result.errors  }, status: 400
+    end
+  end
+
+  def refresh_tokens
+    result = Jwt::TokensRefresherService.call(refresh_token: cookies['refresh_token'])
+    if result.success?
+      access_token, refresh_token = result.tokens
+      cookies['refresh_token'] = {
+        value: refresh_token,
+        expires: JWT_EXPIRATION_TIMES['refresh'],
+        httponly: true }
+      render json: { 'access_token' => access_token }, status: 200
+    else
+      render json: { 'errors' => result.errors }, status: 401
+    end
+  end
+
+  def test_method
+    render json: current_user
+  end
+
+  def destroy
+    current_user.refresh_token.destroy
+    cookies.delete :refresh_token
+    render json: { 'message' => 'You have successfully logged out.' }, status: 200
+  end
+
+end
+```
+Let me explain some logic here. `login` action takes from your params email and password, gives it to `AuthenticationService` and generates two tokens, if authentication was successful. Refresh token saves to cookies and has `httpOnly` flag, access token is sent as JSON and must be saved in localStorage. 
+`refresh_tokens` action takes `refresh_token` from cookies, gives it to `TokensRefresherService`, and, if everything were succesful sends two new tokens back (access token as JSON and refresh token in cookies). Otherwise, server sends 401 response.
+
+**Congratulations!**
+
+You wrote your own authentication with JWT authorization and refresh token! 
+Don't forget to cover written code with tests.
+
+**Thank you for your attention!**
+
+<sub>P.S. I am beginner at Ruby and Rails, so mark anything you will find at Issues
+
+P.P.S Sorry for bad English :D</sub>
