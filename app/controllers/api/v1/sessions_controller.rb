@@ -1,5 +1,7 @@
 class Api::V1::SessionsController < ApplicationController
+  include UserParamable
   include Constants::Jwt
+
   before_action :authorize!, only: %i[test_method destroy]
 
   def login
@@ -38,12 +40,6 @@ class Api::V1::SessionsController < ApplicationController
     current_user.refresh_token.destroy
     cookies.delete :refresh_token
     render json: { 'message' => 'You have successfully logged out.' }, status: 200
-  end
-
-  private
-
-  def user_params
-    params.require(:user).permit(:email, :password)
   end
 
 end

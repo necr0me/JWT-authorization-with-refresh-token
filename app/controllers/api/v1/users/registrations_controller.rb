@@ -1,5 +1,7 @@
 class Api::V1::Users::RegistrationsController < ApplicationController
-  include Userable
+  include UserFindable
+  include UserParamable
+
   before_action :find_user, :authorize!,
                 only: :destroy
 
