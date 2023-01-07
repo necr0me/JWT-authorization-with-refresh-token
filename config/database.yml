@@ -17,6 +17,10 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  user: <%= Rails.application.credentials.pg[:user] %>
+  password: <%= Rails.application.credentials.pg[:password] %>
+  port: <%= Rails.application.credentials.pg[:port] %>
+  host: <%= Rails.application.credentials.pg[:host] %>
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
