@@ -24,7 +24,7 @@ module Jwt
 
         tokens = TokensGeneratorService.call(user_id: decoded_token['user_id'])
         return OpenStruct.new(success?: true, tokens: tokens, errors: nil)
-      rescue JWT::VerificationError, JWT::ExpiredSignature, JWT::DecodeError => e
+      rescue => e
         return OpenStruct.new(success?: false, tokens: nil, errors: [e.message])
       end
     end

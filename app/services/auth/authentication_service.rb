@@ -17,15 +17,15 @@ module Auth
     attr_reader :email, :password
 
     def authenticate
-      @user = User.find_by(email: email)
-      if @user.present?
-        if @user.authenticate(password)
-          OpenStruct.new(success?: true, user: @user, errors: nil)
+      user = User.find_by(email: email)
+      if user.present?
+        if user.authenticate(password)
+          OpenStruct.new(success?: true, user: user, errors: nil)
         else
-          OpenStruct.new(success?: false, user: nil, errors: ['Invalid password.'])
+          OpenStruct.new(success?: false, user: nil, errors: ['Invalid password'])
         end
       else
-        OpenStruct.new(success?: false, user: nil, errors: ['Can\'t find user with such email.'])
+        OpenStruct.new(success?: false, user: nil, errors: ['Can\'t find user with such email'])
       end
     end
 

@@ -16,14 +16,14 @@ module Auth
     attr_reader :authorization_header
 
     def authorize
-      return OpenStruct.new(success?: false, data: nil, errors: ['Authorization header is not presented.']) if authorization_header.nil?
+      return OpenStruct.new(success?: false, data: nil, errors: ['Authorization header is not presented']) if authorization_header.nil?
 
       token = get_token_from_header
       begin
         decoded_token = Jwt::DecoderService.call(token: token,
                                                  type: 'access').first
         return OpenStruct.new(success?: true, data: decoded_token, errors: nil)
-      rescue JWT::VerificationError, JWT::ExpiredSignature, JWT::DecodeError => e
+      rescue => e
         return OpenStruct.new(success?: false, data: nil, errors: [e.message])
       end
     end
