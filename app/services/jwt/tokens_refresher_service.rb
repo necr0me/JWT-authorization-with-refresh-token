@@ -19,7 +19,7 @@ module Jwt
         user = User.includes(:refresh_token).find(decoded_token['user_id'])
 
         if user.refresh_token.value != refresh_token
-          return OpenStruct.new(success?: false, tokens: nil, errors: ['Tokens aren\'t matching.'])
+          return OpenStruct.new(success?: false, tokens: nil, errors: ['Tokens aren\'t matching'])
         end
 
         tokens = TokensGeneratorService.call(user_id: decoded_token['user_id'])

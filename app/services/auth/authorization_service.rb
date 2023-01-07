@@ -23,7 +23,7 @@ module Auth
         decoded_token = Jwt::DecoderService.call(token: token,
                                                  type: 'access').first
         return OpenStruct.new(success?: true, data: decoded_token, errors: nil)
-      rescue JWT::VerificationError, JWT::ExpiredSignature => e
+      rescue JWT::VerificationError, JWT::ExpiredSignature, JWT::DecodeError => e
         return OpenStruct.new(success?: false, data: nil, errors: [e.message])
       end
     end

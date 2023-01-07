@@ -5,9 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8b6f825e-6638-496f-a6f5-53202fb0fa94" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/controllers/concerns/user_findable.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/controllers/concerns/user_paramable.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/controllers/application_controller_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/controllers/concerns/user_findable_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/services/auth/authentication_service_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/services/auth/authorization_service_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/services/jwt/decoder_service_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/services/jwt/encoder_service_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/services/jwt/tokens_generator_service_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/services/jwt/tokens_refresher_service_spec.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/jwt/tokens_refresher_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/jwt/tokens_refresher_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/controllers/concerns/userable_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/controllers/concerns/user_paramable_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/factories/users.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/users.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/refresh_token_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/refresh_token_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/models/user_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/user_spec.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,9 +29,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Ruby Module" />
-        <option value="Ruby File" />
         <option value="Ruby Class" />
+        <option value="Ruby File" />
+        <option value="RSpec" />
+        <option value="Ruby Module" />
       </list>
     </option>
   </component>
@@ -36,6 +49,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;DefaultRubyCreateTestTemplate&quot;: &quot;RSpec&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
@@ -152,7 +166,9 @@
       <workItem from="1672937993650" duration="3246000" />
       <workItem from="1672941325742" duration="2808000" />
       <workItem from="1672950998372" duration="5320000" />
-      <workItem from="1673010308343" duration="106000" />
+      <workItem from="1673010308343" duration="454000" />
+      <workItem from="1673024778364" duration="3540000" />
+      <workItem from="1673099732804" duration="10447000" />
     </task>
     <servers />
   </component>
