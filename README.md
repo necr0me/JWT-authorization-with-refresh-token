@@ -368,7 +368,7 @@ module Jwt
         user = User.includes(:refresh_token).find(decoded_token['user_id'])
 
         if user.refresh_token.value != refresh_token
-          return OpenStruct(success?: false, tokens: nil, errors: ['Tokens aren\'t matching.'])
+          return OpenStruct.new(success?: false, tokens: nil, errors: ['Tokens aren\'t matching'])
         end
 
         tokens = TokensGeneratorService.call(user_id: decoded_token['user_id'])
@@ -406,10 +406,10 @@ module Auth
         if @user.authenticate(password)
           OpenStruct.new(success?: true, user: @user, errors: nil)
         else
-          OpenStruct.new(success?: false, user: nil, errors: ['Invalid password.'])
+          OpenStruct.new(success?: false, user: nil, errors: ['Invalid password'])
         end
       else
-        OpenStruct.new(success?: false, user: nil, errors: ['Can\'t find user with such email.'])
+        OpenStruct.new(success?: false, user: nil, errors: ['Can\'t find user with such email'])
       end
     end
 
@@ -435,7 +435,7 @@ module Auth
     attr_reader :authorization_header
 
     def authorize
-      return OpenStruct.new(success?: false, data: nil, errors: ['Authorization header is not presented.']) if authorization_header.nil?
+      return OpenStruct.new(success?: false, data: nil, errors: ['Authorization header is not presented']) if authorization_header.nil?
 
       token = get_token_from_header
       begin
@@ -490,7 +490,7 @@ end
 ```
 Now you able to write in any controller you want such line:
 ```ruby
-before_action :authorize, only: :action_name
+before_action :authorize!, only: :action_name
 ```
 Which means, that you may require authorization for any actions. So, when you trying to reach `:action_name` endpoint, you need to set up your `Authorization` header. This header should look like this:
 ```
