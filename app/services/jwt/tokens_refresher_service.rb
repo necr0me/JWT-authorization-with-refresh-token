@@ -13,21 +13,18 @@ module Jwt
     attr_reader :refresh_token
 
     def refresh_tokens
-      begin
-        decoded_token = Jwt::DecoderService.call(token: refresh_token,
-                                                 type: 'refresh').first
-        user = User.includes(:refresh_token).find(decoded_token['user_id'])
+      decode_result = Jwt::DecoderService.call(token: refresh_token,
+                                               type: 'refresh')
+      return fail!(error: decode_result.error) if decode_result.data.nil?
 
-        if user.refresh_token.value != refresh_token
-          return OpenStruct.new(success?: false, tokens: nil, errors: ['Tokens aren\'t matching'])
-        end
+      decoded_token = decode_result.data.first
 
-        tokens = TokensGeneratorService.call(user_id: decoded_token['user_id'])
-        return OpenStruct.new(success?: true, tokens: tokens, errors: nil)
-      rescue => e
-        return OpenStruct.new(success?: false, tokens: nil, errors: [e.message])
-      end
+      user = User.includes(:refresh_token).find(decoded_token['user_id'])
+      return fail!(error: "Tokens aren't matching") if user.refresh_token.value != refresh_token
+
+      tokens_result = TokensGeneratorService.call(user_id: decoded_token['user_id'])
+
+      tokens_result.success? ? success!(data: tokens_result.data) : fail!(error: tokens_result.error)
     end
-
   end
 end

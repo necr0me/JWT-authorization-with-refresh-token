@@ -3,52 +3,45 @@ require 'rails_helper'
 RSpec.describe Auth::AuthenticationService do
   let(:user) { create(:user) }
 
-  describe 'when email is invalid' do
-    subject { described_class.call(user_params: { email: ' ', password: ' '}) }
+  describe '#authenticate' do
+    context 'when error occurs' do
+      before do
+        allow(User).to receive(:find_by).and_raise('Some error')
+      end
 
-    it 'success? value is false' do
-      expect(subject.success?).to eq(false)
+      it 'contains error and doesnt return user' do
+        result = described_class.call(user_params: attributes_for(:user))
+        expect(result.error).to eq('Some error')
+      end
     end
 
-    it 'contains error message that can\'t find user with such email' do
-      expect(subject.errors).to include('Can\'t find user with such email')
+    context 'when email is invalid' do
+      it 'contains error and doesnt return user' do
+        result = described_class.call(user_params: { email: ' ', password: ' '})
+
+        expect(result.error).to eq('Can\'t find user with such email')
+        expect(result.data).to be_nil
+      end
     end
 
-    it 'doesn\'t return user' do
-      expect(subject.user).to be_nil
-    end
-  end
+    context 'when password is invalid' do
+      it 'contains error message and does not return user' do
+        result = described_class.call(user_params: { email: user.email, password: ' '})
 
-  describe 'when password is invalid' do
-    subject { described_class.call(user_params: { email: user.email, password: ' '}) }
-
-    it 'success? value is false' do
-      expect(subject.success?).to eq(false)
+        expect(result.error).to eq('Invalid password')
+        expect(result.data).to be_nil
+      end
     end
 
-    it 'contains error message that password is invalid' do
-      expect(subject.errors).to include('Invalid password')
-    end
+    context 'when credentials are correct' do
+      it 'does not contains any errors and returns correct user' do
+        result = described_class.call(user_params: { email: user.email, password: user.password } )
 
-    it 'doesn\'t return user' do
-      expect(subject.user).to be_nil
-    end
-  end
+        expect(result.error).to be_nil
 
-  describe 'when credentials are correct' do
-    subject { described_class.call(user_params: { email: user.email, password: user.password } ) }
-
-    it 'success? value is true' do
-      expect(subject.success?).to eq(true)
-    end
-
-    it 'doesn\'t contains any errors' do
-      expect(subject.errors).to be_nil
-    end
-
-    it 'returns correct user' do
-      expect(subject.user).to_not be_nil
-      expect(subject.user.id).to eq(user.id)
+        expect(result.data).to_not be_nil
+        expect(result.data.id).to eq(user.id)
+      end
     end
   end
 end

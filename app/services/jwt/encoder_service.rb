@@ -17,7 +17,7 @@ module Jwt
 
     def encode(payload, type)
       payload = payload.merge(jwt_data)
-      JWT.encode(payload, JWT_SECRET_KEYS[type], JWT_ALGORITHM)
+      success!(data: JWT.encode(payload, JWT_SECRET_KEYS[type], JWT_ALGORITHM))
     end
 
     def jwt_data
@@ -26,6 +26,5 @@ module Jwt
         iat: Time.now.to_i
       }
     end
-
   end
 end

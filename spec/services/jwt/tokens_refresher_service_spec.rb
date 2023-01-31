@@ -1,112 +1,86 @@
 require 'rails_helper'
 
 RSpec.describe Jwt::TokensRefresherService do
-  let(:user) { create(:user, :with_refresh_token) }
-  let(:secret_key) { Constants::Jwt::JWT_SECRET_KEYS['refresh'] }
-  let(:secret_access_key) { Constants::Jwt::JWT_SECRET_KEYS['access'] }
+  let(:user) { create(:user, :user_with_refresh_token) }
+
+  let(:payload) { { user_id: user.id } }
+  let(:refresh_secret) { Constants::Jwt::JWT_SECRET_KEYS['refresh'] }
+  let(:access_secret) { Constants::Jwt::JWT_SECRET_KEYS['access'] }
   let(:algorithm) { Constants::Jwt::JWT_ALGORITHM }
 
+  let(:refresh_token) { JWT.encode(payload, refresh_secret, algorithm)}
 
-  describe 'no refresh token presented' do
-    subject { described_class.call(refresh_token: nil) }
+  describe '#refresh_tokens' do
+    context 'when error occurs' do
+      before do
+        allow(User).to receive(:includes).and_raise('Some error')
+      end
 
-    it 'success? value is false' do
-      expect(subject.success?).to eq(false)
+      it 'does not return tokens and contains error message' do
+        result = described_class.call(refresh_token: refresh_token)
+
+        expect(result.data).to be_nil
+        expect(result.error).to eq('Some error')
+      end
     end
 
-    it 'contains error message that token is not presented' do
-      expect(subject.errors).to include(/Nil JSON/)
+    context 'no refresh token presented' do
+      it 'contains error message and does not returns tokens' do
+        result = described_class.call(refresh_token: nil)
+
+        expect(result.error).to match(/Nil JSON/)
+        expect(result.data).to be_nil
+      end
     end
 
-    it 'does not returns tokens' do
-      expect(subject.tokens).to be_nil
-    end
-  end
 
+    context 'presented refresh token and refresh token in db are not matching' do
+      it 'success? value is false, contains error message and does not returns tokens' do
+        result = described_class.call(refresh_token: refresh_token)
 
-  describe 'presented refresh token and refresh token in db are not matching' do
-    subject { described_class.call(refresh_token: JWT.encode({ user_id: user.id }, secret_key, algorithm))}
-
-    it 'success? value is false' do
-      expect(subject.success?).to eq(false)
+        expect(result.error).to eq('Tokens aren\'t matching')
+        expect(result.data).to be_nil
+      end
     end
 
-    it 'contains error message that tokens aren\'t matching' do
-      expect(subject.errors).to include('Tokens aren\'t matching')
+    context 'expired refresh token presented' do
+      before do
+        user.refresh_token.update(value: JWT.encode(payload.merge({ exp: Time.now.to_i - 1.minutes.to_i }),
+                                                    refresh_secret,
+                                                    algorithm))
+      end
+
+      it 'success? value is false, contains error message and does not returns tokens' do
+        result = described_class.call(refresh_token: user.reload.refresh_token.value)
+
+        expect(result.error).to eq('Signature has expired')
+        expect(result.data).to be_nil
+      end
     end
 
-    it 'does not returns tokens' do
-      expect(subject.tokens).to be_nil
-    end
-  end
+    context 'access token presented instead of refresh token' do
+      it 'success? value is false, contains error message and does not returns tokens' do
+        result = described_class.call(refresh_token: JWT.encode(payload, access_secret, algorithm))
 
-  describe 'expired refresh token presented' do
-    subject { described_class.call(refresh_token: user.reload.refresh_token.value) }
-
-    before do
-      user.refresh_token.update(value: JWT.encode({ user_id: user.id, exp: Time.now.to_i - 1.minutes.to_i },
-                                                  secret_key,
-                                                  algorithm))
+        expect(result.error).to eq('Signature verification failed')
+        expect(result.data).to be_nil
+      end
     end
 
-    it 'success? value is false' do
-      expect(subject.success?).to eq(false)
-    end
+    context 'correct refresh token presented' do
+      before { user.refresh_token.update(value: refresh_token) }
 
-    it 'contains error message that token signature is expired' do
-      expect(subject.errors).to include('Signature has expired')
-    end
+      it 'success? value is true, no errors, returns 2 tokens and updates refresh token in db' do
+        old_token = user.reload.refresh_token.value
+        result = described_class.call(refresh_token: user.reload.refresh_token.value)
+        new_token = result.data.last
 
-    it 'does not returns tokens' do
-      expect(subject.tokens).to be_nil
-    end
-  end
+        expect(result.error).to be_nil
+        expect(result.data.count).to eq(2)
 
-  describe 'access token presented instead of refresh token' do
-    subject { described_class.call(refresh_token: JWT.encode({ user_id: user.id},
-                                                             secret_access_key,
-                                                             algorithm)) }
-
-    it 'success? value is false' do
-      expect(subject.success?).to eq(false)
-    end
-
-    it 'contains signature verification error message' do
-      expect(subject.errors).to include('Signature verification failed')
-    end
-
-    it 'does not returns tokens' do
-      expect(subject.tokens).to be_nil
-    end
-  end
-
-  describe 'correct refresh token presented' do
-    subject { described_class.call(refresh_token: user.reload.refresh_token.value) }
-
-    before do
-      user.refresh_token.update(value: JWT.encode({ user_id: user.id },
-                                                  secret_key,
-                                                  algorithm))
-    end
-
-    it 'success? value is true' do
-      expect(subject.success?).to eq(true)
-    end
-
-    it 'no errors presented' do
-      expect(subject.errors).to be_nil
-    end
-
-    it 'returns 2 tokens' do
-      expect(subject.tokens.count).to eq(2)
-    end
-
-    it 'updates token in db' do
-      old_token = user.reload.refresh_token.value
-      new_token = subject.tokens.last
-
-      expect(user.reload.refresh_token.value).to eq(new_token)
-      expect(user.refresh_token.value).to_not eq(old_token)
+        expect(user.reload.refresh_token.value).to eq(new_token)
+        expect(user.refresh_token.value).to_not eq(old_token)
+      end
     end
   end
 end

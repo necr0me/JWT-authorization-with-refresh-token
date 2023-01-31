@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   let(:user) { create(:user) }
-  let(:user_with_token) { create(:user, :with_refresh_token)}
+  let(:user_with_token) { create(:user, :user_with_refresh_token)}
 
   describe 'validations' do
     context '#email' do
