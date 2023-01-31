@@ -1,70 +1,64 @@
 require 'rails_helper'
-# To make this tests better necessary to make described service unit testable
 
 RSpec.describe Jwt::DecoderService do
-  let(:user) { create(:user) }
+  let(:payload) { { user_id: '1337' } }
+  let(:algorithm) { Constants::Jwt::JWT_ALGORITHM }
 
-  describe 'refresh token' do
-    before do
-      @refresh_token = JWT.encode({ user_id: user.id },
-                                  Constants::Jwt::JWT_SECRET_KEYS['refresh'],
-                                  Constants::Jwt::JWT_ALGORITHM)
+  describe '#call' do
+    context 'refresh token' do
+      let(:token_type) { 'refresh' }
+      let(:secret) { Constants::Jwt::JWT_SECRET_KEYS[token_type] }
+
+      context 'when error occurs' do
+        before do
+          allow(JWT).to receive(:decode).and_raise('Some error')
+        end
+
+        it 'does not contains decoded token and contains error message' do
+          result = described_class.call(token: JWT.encode(payload, secret, algorithm),
+                                        type: token_type)
+          expect(result.data).to be_nil
+          expect(result.error).to eq('Some error')
+        end
+      end
+
+      context 'when no errors occurs' do
+        it 'decodes token with correct key' do
+          result = described_class.call(token: JWT.encode(payload, secret, algorithm),
+                                        type: 'refresh')
+
+          expect(result.success?).to be_truthy
+          expect(result.data.first['user_id']).to eq(payload[:user_id])
+        end
+      end
     end
 
-    it 'raises verification error when using wrong key' do
-      expect { described_class.call(token: @refresh_token,
-                                  type: 'access') }.to raise_error(JWT::VerificationError)
-    end
+    context 'access token' do
+      let(:token_type) { 'access' }
+      let(:secret) { Constants::Jwt::JWT_SECRET_KEYS[token_type] }
 
-    it 'raises expired signature error when token is expired' do
-      @refresh_token = JWT.encode({ user_id: user.id, exp: Time.now.to_i - 1.minutes.to_i },
-                                  Constants::Jwt::JWT_SECRET_KEYS['refresh'],
-                                  Constants::Jwt::JWT_ALGORITHM)
-      expect { described_class.call(token: @refresh_token,
-                                    type: 'refresh') }.to raise_error(JWT::ExpiredSignature)
-    end
+      context 'when error occurs' do
+        before do
+          allow(JWT).to receive(:decode).and_raise('Some error')
+        end
 
-    it 'raises nil json web token error when token is not present' do
-      expect { described_class.call(token: ' ',
-                                    type: 'refresh') }.to raise_error(JWT::DecodeError)
-    end
+        it 'does not contains decoded token and returns error' do
+          result = described_class.call(token: JWT.encode(payload, secret, algorithm),
+                                        type: 'access')
+          expect(result.data).to be_nil
+          expect(result.error).to eq('Some error')
+        end
+      end
 
-    it 'decodes token with correct key' do
-      decoded = described_class.call(token: @refresh_token,
-                                     type: 'refresh').first
-      expect(decoded['user_id']).to eq(user.id)
-    end
-  end
+      context 'when no error occurs' do
+        it 'returns decoded token' do
+          result = described_class.call(token: JWT.encode(payload, secret, algorithm),
+                                        type: 'access')
 
-  describe 'access token' do
-    before do
-      @access_token = JWT.encode({ user_id: user.id },
-                                  Constants::Jwt::JWT_SECRET_KEYS['access'],
-                                  Constants::Jwt::JWT_ALGORITHM)
-    end
-
-    it 'raises verification error when using wrong key' do
-      expect { described_class.call(token: @access_token,
-                                    type: 'refresh') }.to raise_error(JWT::VerificationError)
-    end
-
-    it 'raises expired signature error when token is expired' do
-      @access_token = JWT.encode({ user_id: user.id, exp: Time.now.to_i - 1.minutes.to_i },
-                                  Constants::Jwt::JWT_SECRET_KEYS['access'],
-                                  Constants::Jwt::JWT_ALGORITHM)
-      expect { described_class.call(token: @access_token,
-                                    type: 'access') }.to raise_error(JWT::ExpiredSignature)
-    end
-
-    it 'raises nil json web token error when token is not present' do
-      expect { described_class.call(token: ' ',
-                                    type: 'access') }.to raise_error(JWT::DecodeError)
-    end
-
-    it 'decodes token with correct key' do
-      decoded = described_class.call(token: @access_token,
-                                     type: 'access').first
-      expect(decoded['user_id']).to eq(user.id)
+          expect(result.success?).to be_truthy
+          expect(result.data.first['user_id']).to eq(payload[:user_id])
+        end
+      end
     end
   end
 end

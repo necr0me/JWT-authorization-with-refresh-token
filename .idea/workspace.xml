@@ -5,21 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8b6f825e-6638-496f-a6f5-53202fb0fa94" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/spec/controllers/application_controller_spec.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/spec/controllers/concerns/user_findable_spec.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/spec/services/auth/authentication_service_spec.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/spec/services/auth/authorization_service_spec.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/spec/services/jwt/decoder_service_spec.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/spec/services/jwt/encoder_service_spec.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/spec/services/jwt/tokens_generator_service_spec.rb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/spec/services/jwt/tokens_refresher_service_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/controllers/concerns/authorization.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/controllers/concerns/error_handler.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/controllers/concerns/authorization_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/controllers/concerns/error_handler_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/requests/users/registrations_spec.rb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/spec/requests/users/sessions_spec.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/user.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/user.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/sessions_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/users/sessions_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/api/v1/users/registrations_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/users/registrations_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/application_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/application_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/auth/authentication_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/auth/authentication_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/auth/authorization_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/auth/authorization_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/jwt/decoder_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/jwt/decoder_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/jwt/encoder_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/jwt/encoder_service.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/jwt/tokens_generator_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/jwt/tokens_generator_service.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/jwt/tokens_refresher_service.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/jwt/tokens_refresher_service.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/controllers/concerns/userable_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/controllers/concerns/user_paramable_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/routes.rb" beforeDir="false" afterPath="$PROJECT_DIR$/config/routes.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/controllers/api/v1/sessions_controller_spec.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/controllers/api/v1/users/registrations_controller_spec.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/controllers/concerns/user_findable_spec.rb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/controllers/concerns/user_paramable_spec.rb" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/spec/factories/users.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/factories/users.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/models/refresh_token_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/refresh_token_spec.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/models/user_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/models/user_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/services/auth/authentication_service_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/services/auth/authentication_service_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/services/auth/authorization_service_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/services/auth/authorization_service_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/services/jwt/decoder_service_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/services/jwt/decoder_service_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/services/jwt/encoder_service_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/services/jwt/encoder_service_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/services/jwt/tokens_generator_service_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/services/jwt/tokens_generator_service_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/services/jwt/tokens_refresher_service_spec.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/services/jwt/tokens_refresher_service_spec.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/support/api_helpers.rb" beforeDir="false" afterPath="$PROJECT_DIR$/spec/support/api_helpers.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,12 +46,17 @@
       <list>
         <option value="Ruby Class" />
         <option value="Ruby File" />
-        <option value="RSpec" />
         <option value="Ruby Module" />
+        <option value="RSpec" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="dev/#4-writing-tests" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -53,7 +73,7 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/pavel/RubymineProjects/Devise-with-JWT-auth&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/pavel/RubymineProjects/Railway-API&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -66,10 +86,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/controllers/users" />
+      <recent name="$PROJECT_DIR$/app/controllers" />
       <recent name="$PROJECT_DIR$/spec/helpers" />
       <recent name="$PROJECT_DIR$/app/services/auth" />
       <recent name="$PROJECT_DIR$/app/controllers/api/v1/users" />
-      <recent name="$PROJECT_DIR$/app/services" />
     </key>
   </component>
   <component name="RunManager" selected="Rails.JWT-authorization-with-refresh-token">
@@ -168,7 +189,9 @@
       <workItem from="1672950998372" duration="5320000" />
       <workItem from="1673010308343" duration="454000" />
       <workItem from="1673024778364" duration="3540000" />
-      <workItem from="1673099732804" duration="10447000" />
+      <workItem from="1673099732804" duration="13635000" />
+      <workItem from="1673268837072" duration="295000" />
+      <workItem from="1675189778103" duration="1768000" />
     </task>
     <servers />
   </component>
